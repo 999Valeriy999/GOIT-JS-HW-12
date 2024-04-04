@@ -27,24 +27,24 @@ loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 // Загальна обробка даних про зображення
 function handleImageData(data) {
   loader.style.display = 'none';
-
   const hasNoImages =
     data.totalHits === 0 || (data.hits && data.hits.length === 0);
-
   if (hasNoImages && gallery.innerHTML.trim() === '') {
     alertNoImagesFound();
   } else {
     const totalPages = Math.ceil(data.totalHits / perPage);
-
-    if (page > totalPages) {
+    const currentImagesCount = gallery.querySelectorAll('.gallery-item').length;
+    if (page >= totalPages) {
+      // тут
+      renderGallery(data.hits); // тут
+      galleryLightbox = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionDelay: 250,
+      }).refresh();
       loadMoreBtn.classList.add('is-hidden');
       alertEndOfSearch();
     } else {
-      const currentImagesCount =
-        gallery.querySelectorAll('.gallery-item').length;
-
       if (currentImagesCount >= data.totalHits) {
-        // Якщо кількість завантажених зображень стає більшою або дорівнює totalHits
         loadMoreBtn.classList.add('is-hidden');
         alertEndOfSearch();
       } else {
@@ -53,7 +53,6 @@ function handleImageData(data) {
           captionsData: 'alt',
           captionDelay: 250,
         }).refresh();
-
         loadMoreBtn.classList.remove('is-hidden');
         smoothScrollBy(getCardHeight() * 2);
       }
